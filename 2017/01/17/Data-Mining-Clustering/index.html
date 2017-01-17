@@ -1,0 +1,1099 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|consolas:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Data Mining," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="作为“煤矿工作者”，聚类可以在迷茫的时候提供挖掘方向。嗯，Interesting~~">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聚类算法总结">
+<meta property="og:url" content="http://water160.github.io/2017/01/17/Data-Mining-Clustering/index.html">
+<meta property="og:site_name" content="Water160's Blog">
+<meta property="og:description" content="作为“煤矿工作者”，聚类可以在迷茫的时候提供挖掘方向。嗯，Interesting~~">
+<meta property="og:image" content="http://p1.bpimg.com/567571/1ed7f5963f7a999f.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/ee6d3de2685ac1e1.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/1da9f05eff94a607.png">
+<meta property="og:image" content="http://p1.bpimg.com/567571/4aa9559866a617c4.png">
+<meta property="og:image" content="http://p1.bqimg.com/567571/3226857e54228ccc.png">
+<meta property="og:updated_time" content="2017-01-17T08:36:55.297Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="聚类算法总结">
+<meta name="twitter:description" content="作为“煤矿工作者”，聚类可以在迷茫的时候提供挖掘方向。嗯，Interesting~~">
+<meta name="twitter:image" content="http://p1.bpimg.com/567571/1ed7f5963f7a999f.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":5},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://water160.github.io/2017/01/17/Data-Mining-Clustering/"/>
+
+
+
+
+
+  <title> 聚类算法总结 | Water160's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Water160's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">A genuine African (。﹏。)</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://water160.github.io/2017/01/17/Data-Mining-Clustering/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Water160">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Water160's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Water160's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                聚类算法总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-01-17T15:27:32+08:00">
+                2017-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据挖掘与机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">数据挖掘与机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/01/17/Data-Mining-Clustering/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/17/Data-Mining-Clustering/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote class="blockquote-center"><p>作为“煤矿工作者”，聚类可以在迷茫的时候提供挖掘方向。嗯，Interesting~~ </p>
+</blockquote>
+<a id="more"></a>
+<h2 id="一、划分方法"><a href="#一、划分方法" class="headerlink" title="一、划分方法"></a><font color="#DC143C"><strong>一、划分方法</strong></font></h2><blockquote>
+<p><strong>思想：</strong> 每个数据被归入相互不同重叠的 k 个 cluster 之一<br>  <strong>目标：</strong> cluster 内距离最小</p>
+</blockquote>
+<h3 id="1-1-K-Means算法"><a href="#1-1-K-Means算法" class="headerlink" title="1.1 K-Means算法"></a><font color="#2864FF"><strong>1.1 K-Means算法</strong></font></h3><blockquote>
+<ol>
+<li><strong>算法思想：</strong><ul>
+<li>指定 cluster 数目为 k；</li>
+<li>随机划分数据到 k 个子集；</li>
+<li>计算每个子集的“中心”数据；</li>
+<li>【计算所有数据到 k 个“中心”距离】</li>
+<li>【将每个数据所属类别调整到里数据最近“中心”所代表的 cluster/子集】</li>
+<li>重复上述两个步骤，直至收敛。</li>
+</ul>
+</li>
+<li><strong>算法优点：</strong><ul>
+<li>简单，实现简单；运行时间复杂度较低: O(nkt)[ 元组数n × cluster数k × 迭代次数t)]。</li>
+<li>目标明确：最小化类内距离。</li>
+</ul>
+</li>
+<li><strong>算法不足：</strong><ul>
+<li>易陷入局部最优解（和初始值密切相关）；</li>
+<li>“中心”计算时，标称数据不好处理；</li>
+<li>需要预置k值；</li>
+<li>对噪声数据/孤立点敏感；</li>
+<li>非凸 cluster 的识别能力弱。</li>
+</ul>
+</li>
+<li><strong>算法改进：</strong><ul>
+<li>K-Means 算法的“中心”点是虚拟数据，不一定在数据集合中存在，改成某实际靠近中心点且存在的数据，得到“k-中心点”算法；<ul>
+<li>降低了噪声、离群点的影响，增加了时间代价；</li>
+<li>标称属性的“中心”用众数代替均值，及改进的距离计算方法；</li>
+</ul>
+</li>
+<li>改进初始时刻数据划分方法或中心点选择方法，如PAM算法。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h3 id="1-2-PAM算法"><a href="#1-2-PAM算法" class="headerlink" title="1.2 PAM算法"></a><font color="#2864FF"><strong>1.2 PAM算法</strong></font></h3><blockquote>
+<ol>
+<li><strong>算法思想：</strong><ul>
+<li>核心思想：围绕中心点划分方法。<ul>
+<li>随机选择 k 个种子为中心点，即 cluster 的代表，将数据点划归到最近中心点/种子代表的 cluster；</li>
+<li>对所有（种子，非种子）对，尝试交换它们，检查是否能提高聚类质量：所有元组到各自“中心”的距离和。选择最好的能提升结果质量所对应的交换，实施交换，直至算法收敛。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>算法评述：</strong><ul>
+<li>K-medoids 算法的改进；</li>
+<li>可以用一些启发式方法选择交换的种子和非种子；</li>
+<li>易陷入局部最优。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h3 id="1-3-针对大规模数据集改进算法"><a href="#1-3-针对大规模数据集改进算法" class="headerlink" title="1.3 针对大规模数据集改进算法"></a><font color="#2864FF"><strong>1.3 针对大规模数据集改进算法</strong></font></h3><blockquote>
+<ol>
+<li><strong>主要解决问题：</strong><ul>
+<li>数据集无法一次载入内存；重复多次计算一个点/数据到其它数据的距离；</li>
+</ul>
+</li>
+<li><strong>CLARA算法：</strong><ul>
+<li>对数据集中的数据进行采样，在采样得到的子集上寻找中心点，执行 PAM 算法；</li>
+</ul>
+</li>
+<li><strong>CLARANS算法：</strong><ul>
+<li>执行 PAM 算法，其中没有搜索所有可能的实施交换的对，仅仅执行L次（种子，非种子）对的交换；</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="二、层次方法"><a href="#二、层次方法" class="headerlink" title="二、层次方法"></a><font color="#DC143C"><strong>二、层次方法</strong></font></h2><blockquote>
+<p><strong>层次聚类：</strong> 在不同概念层次上各自形成 clusters，构成一棵树状图(Dendrogram)<br><strong>重点考虑优化目标：</strong> cluster 之间的距离最大化<br><strong>核心问题：</strong> 两个 cluster 之间的距离如何计算的问题（采用最小、最大、平均距离、虚拟中心、Medoid距离等）</p>
+</blockquote>
+<h3 id="2-1-主要层次算法："><a href="#2-1-主要层次算法：" class="headerlink" title="2.1 主要层次算法："></a><font color="#2864FF"><strong>2.1 主要层次算法：</strong></font></h3><blockquote>
+<ol>
+<li><strong>AGNES算法（凝聚思想）：</strong><ul>
+<li>自底向上，找两个簇，它们中最相似两个数据的距离最小，则合并这两个簇；迭代该过程，直至所有对象最终合并形成一个簇。</li>
+</ul>
+</li>
+<li><strong>DIANA算法（分裂思想)：</strong><ul>
+<li>自顶向下，找一个簇，簇中最近两个数据的距离在所有簇中最大，分裂该簇；迭代该过程；</li>
+<li>计算量较大通常采用启发式，为了效率通常不对已做出的划分决策回溯；</li>
+</ul>
+</li>
+<li><strong>算法评估：</strong><ul>
+<li>聚合/分裂点的选择，极大影响算法的性能；</li>
+<li>相对来说，算法时间复杂度较高；</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h3 id="2-2-针对大规模数据集改进算法："><a href="#2-2-针对大规模数据集改进算法：" class="headerlink" title="2.2 针对大规模数据集改进算法："></a><font color="#2864FF"><strong>2.2 针对大规模数据集改进算法：</strong></font></h3><h4 id="2-2-1-BIRCH算法（利用层次结构的平衡迭代规约和聚类）"><a href="#2-2-1-BIRCH算法（利用层次结构的平衡迭代规约和聚类）" class="headerlink" title="2.2.1 BIRCH算法（利用层次结构的平衡迭代规约和聚类）"></a><font color="#2E8B57"><strong>2.2.1 BIRCH算法（利用层次结构的平衡迭代规约和聚类）</strong></font></h4><blockquote>
+<ol>
+<li><strong>算法思想：</strong><ul>
+<li>利用统计信息表示一个簇，避免存储簇中所有数据；实现簇信息的压缩存储。也可以认为是定义了一个簇的特征描述。</li>
+</ul>
+</li>
+<li><strong>算法步骤：</strong><ul>
+<li>扫描数据集，逐步构建一棵包括了<code>簇统计信息 / 特征</code>的树（聚类特征向量CF：包含聚类的特征，计算简单），非叶结点是统计信息；一个叶节点是一个簇，不同的数据归入不同簇；</li>
+<li>若某个簇的数据太多，距离太大，考虑分裂该簇（及其父节点）；</li>
+</ul>
+</li>
+<li><strong>算法特点：</strong><ul>
+<li>每个非叶结点的聚类特征向量包括其所有“后代”叶子节点数据的统计信息；</li>
+<li>新数据加入后，归入某一类，更新其所有父节点的统计信息/聚类特征向量；</li>
+<li>当叶结点的父节点特征向量达到某个“临界点”/满足某些条件时，考虑分裂该节点；</li>
+<li>增量式算法；<ul>
+<li>算法参数1：<code>分支因子B</code>，控制非叶结点的最大孩子数；</li>
+<li>算法参数2：<code>cluster直径最大值的界 T</code>，超过就分裂此cluster。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>算法优点：</strong><ul>
+<li>时间复杂度O(n)，只需要装入一次数据集，适用于大型数据集；</li>
+<li>重点在CF和CF-Tree的设计和利用很巧妙，压缩存储数据集；</li>
+<li>动态调整参数，使得其和机器的内存配置相适应；</li>
+<li>对叶条目对应的cluster可以继续处理：采用其它技术（比如聚类），删除小的cluster（离群点），合并稠密的cluster；</li>
+</ul>
+</li>
+<li><strong>算法缺点：</strong><ul>
+<li><code>B</code>，<code>T</code>和 <code>L</code> 的确定没有标准和经验，但它们显著影响性能；</li>
+<li>对数据对象的<code>输入次序敏感/次序相关</code>的；</li>
+<li><code>T</code>的使用，使得 cluster 形状受约束；</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h4 id="2-2-2-Chameleon算法（使用动态建模的多阶段层次聚类）"><a href="#2-2-2-Chameleon算法（使用动态建模的多阶段层次聚类）" class="headerlink" title="2.2.2 Chameleon算法（使用动态建模的多阶段层次聚类）"></a><font color="#2E8B57"><strong>2.2.2 Chameleon算法（使用动态建模的多阶段层次聚类）</strong></font></h4><blockquote>
+<ol>
+<li><strong>核心思想：</strong><ul>
+<li>两个cluster之间连边很多，且距离近，则合并之。</li>
+</ul>
+</li>
+<li><strong>算法步骤：</strong><ul>
+<li>从数据集开始，每个数据视为n-D空间中的一个点；</li>
+<li>计算每个点的k个最近邻（构建KNN图），然后连接，并且每个连接赋予权值（距离）；</li>
+<li>划分图：使得分割边（被切断的边）的权值之和最小，评估了簇之间的<code>绝对互连性</code>；</li>
+<li>合并<code>RI</code>（相对互连度：(最小二分)边割和）和<code>RC</code>（相对接近度：(最小二分)平均权重）大于用户指定阈值的簇。</li>
+<li>时间复杂度最坏是<code>O(n^2)</code>；</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h3 id="2-3-概率层次聚类算法："><a href="#2-3-概率层次聚类算法：" class="headerlink" title="2.3 概率层次聚类算法："></a><font color="#2864FF"><strong>2.3 概率层次聚类算法：</strong></font></h3><blockquote>
+<ol>
+<li><strong>上述层次聚类算法的缺点：</strong><ul>
+<li>为层次聚类选择一种好的距离度量常常是困难的；</li>
+<li>为了使用算法，数据对象不能有缺失的属性值，而实际中数据被部分观测情况下很难计算距离；</li>
+<li>大部分算法的层次聚类方法都是启发式的（每一步局部搜索号的合并/划分），因此聚类层次结果的优化目标可能不清晰；</li>
+</ul>
+</li>
+<li><strong>针对上述层次聚类算法的改进：</strong><ul>
+<li>使用概率模型度量簇之间的距离，使用生成模型，找出拟合观测数据的最佳参数值）</li>
+</ul>
+</li>
+<li><strong>算法核心思想：</strong><ul>
+<li>用<code>概率模型来度量</code> cluster 之间的距离，避免层次方法中最优距离定义问题；</li>
+<li>基于<code>生成模型</code>（一个联合概率分布），例如每个 cluster 来自一个高维高斯分布等；cluster 是该生成模型的一个样本集；生成模型的参数由 cluster 的样本集估计出来；生成模型将对样本集进行新的划分；</li>
+<li>该过程循环迭代直到收敛；</li>
+</ul>
+</li>
+<li><strong>算法基本过程就是 EM 或 K-Means。</strong></li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="三、基于密度的方法"><a href="#三、基于密度的方法" class="headerlink" title="三、基于密度的方法"></a><font color="#DC143C"><strong>三、基于密度的方法</strong></font></h2><h3 id="3-1-DBSCAN算法（一个cluster就是密度连通的最大点集）"><a href="#3-1-DBSCAN算法（一个cluster就是密度连通的最大点集）" class="headerlink" title="3.1 DBSCAN算法（一个cluster就是密度连通的最大点集）"></a><font color="#2864FF"><strong>3.1 DBSCAN算法（一个cluster就是密度连通的最大点集）</strong></font></h3><blockquote>
+<ol>
+<li><strong>一些概念：</strong><ul>
+<li><code>q [直接密度可达] p</code>：q 是<code>核心对象</code>，q 的领域中有 p；</li>
+<li><code>q [密度可达] p</code>：存在一条 q 到 p 的链路，前一个数据对象<code>直接可达</code>后一个数据对象；<ul>
+<li>链上<code>前n-1个数据对象</code>都是<code>核心对象</code>；</li>
+<li>对直接密度可达概念的扩展；</li>
+</ul>
+</li>
+<li><code>p, q密度连通</code>：任意给定两个数据对象 p, q，当且仅当存在一个数据 o，o 分别<code>密度可达</code> p, q。</li>
+</ul>
+</li>
+<li><strong>算法步骤：</strong><ul>
+<li>初始时刻，所有点都标记为unvisited，随机选择一个记为 p，并标记为 visited，检查是否是核心对象，否则记为噪声/非核心点；</li>
+<li>若 p 是核心对象，则创建新簇C，将<code>Nε(p)</code>（p的邻域点集）添加到集合 N；<br>检查 N 中的点，假设为 q，加入 C（必然是p簇中的一个），检查 q 的标记，若是 unvisited，则改为 visited，并检查其邻域大小<code>|Nε(q)|</code>,若 q 为核心对象，则<code>Nε(q)</code>（q的邻域点集）都加入 N；</li>
+<li>N 为空时，找到一个簇 C；</li>
+<li>重复上述过程，得到其它的簇。</li>
+</ul>
+</li>
+<li><strong>算法评估：</strong><ul>
+<li>使用空间索引可以使得时间复杂度为 <code>O(nlogn)</code>，n 为数据库对象数，其复杂度为<code>O(n^2)</code>；</li>
+<li>若 <code>ε</code>和 <code>Minpts</code> 设置恰当，则该算法可以有效地发现任意形状的簇；</li>
+<li>但是参数的设置难以确定，特别对于高维数据集，对参数值敏感；</li>
+<li>只有一组全局参数，使得基于密度的簇关于邻域的阈值是单调的。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h3 id="3-2-OPTICS算法（使用簇排序，不显式产生数据集聚类）"><a href="#3-2-OPTICS算法（使用簇排序，不显式产生数据集聚类）" class="headerlink" title="3.2 OPTICS算法（使用簇排序，不显式产生数据集聚类）"></a><font color="#2864FF"><strong>3.2 OPTICS算法（使用簇排序，不显式产生数据集聚类）</strong></font></h3><blockquote>
+<ol>
+<li><strong>算法假设：</strong><ul>
+<li>任何一个点的<code>概率密度</code>依赖该点（出现概率较大）到样本的距离；</li>
+</ul>
+</li>
+<li><strong>一些概念：</strong><ul>
+<li><code>核心距离</code>：p 核心距离是最小半径<code>ε’</code>，使得至少包含<code>Minpts</code>个对象，若 p 不是核心对象，则没有定义。</li>
+<li><code>可达距离</code>：q 到 p 的可达距离是从 q 密度可达 p 的最小半径值（q 必须是核心对象，p 必须在 q 的邻域内），可达距离为 <code>max{ core-distance(q), dist(p, q) }</code>，若 q 不是核心对象，则没有定义。</li>
+</ul>
+</li>
+<li><strong>算法步骤：</strong><ul>
+<li>开始用数据库中的任意对象作为当前对象 p，检索 p 的 <code>ε 邻域</code>，确定核心距离并设置可达距离为未定义</li>
+<li>输出当前对象 p，若 p 不是核心对象，则转移到 <code>OrderSeeds表</code>下一个（若<code>OrderSeeds表</code>为空，则找数据库中的下一个）；</li>
+<li>若 p 是核心对象，则对于 p 的 ε 邻域中的每个对象 q，更新从 p 到 q 的可达距离，并且如果 q 尚未处理则加入到<code>OrderSeeds表</code>中</li>
+<li>不断迭代知道输入数据库为空，并且OrderSeeds为空。</li>
+</ul>
+</li>
+<li><strong>算法评估：</strong><ul>
+<li>算法结构与DBSCAN相似，使用空间索引可以使得时间复杂度为<code>O(nlogn)</code>，否则为<code>O(n^2)</code>。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<ul>
+<li><strong>DBSCAN 和 OPTICS 算法的密度估计方式对半径值非常敏感，随着半径的稍微增加，密度显著改变，需要使用<code>核密度估计</code>（非参数密度估计方法，减少参数值带来的敏感性）。</strong></li>
+</ul>
+<h3 id="3-3-DENCLUE算法（基于密度分布函数的聚类）"><a href="#3-3-DENCLUE算法（基于密度分布函数的聚类）" class="headerlink" title="3.3 DENCLUE算法（基于密度分布函数的聚类）"></a><font color="#2864FF"><strong>3.3 DENCLUE算法（基于密度分布函数的聚类）</strong></font></h3><blockquote>
+<ol>
+<li><strong>核心思想：</strong><ul>
+<li>想象一个场/平面，上面堆了很多沙堆，每个沙堆独立看，是“正态分布”；</li>
+<li>平面上的每个点都是很多个沙堆“叠加”出来一个高度，高度代表密度，出现一个新样本的概率；</li>
+<li>“正态”沙堆多了，彼此交叠，就成了“绵延起伏”的沙漠；沙漠中存在一些沙丘的高点，高于周围的沙；形成一个局部最大值；正式的名称是<code>局部吸引子</code></li>
+<li>达到一定高度 h 的<code>局部吸引子</code>可以被视为簇中心，用来把样本数据划归到不同的簇中。</li>
+<li>用<code>爬山式方法</code>把样本划分给<code>局部吸引子</code>，因为“沙漠”是一个概率密度函数，存在梯度，沿梯度方向让每个样本找到一个“山顶”。</li>
+<li>若一个样本数据爬到了一个非局部吸引子的山顶（&lt; h），那么这个数据就被认为“噪声”;</li>
+</ul>
+</li>
+<li><strong>算法评估：</strong><ul>
+<li>DBSCAN 的一般化，抗噪声。核密度估计通过把噪声均匀分不到输入数据，降低噪声影响。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="四、基于网格的方法"><a href="#四、基于网格的方法" class="headerlink" title="四、基于网格的方法"></a><font color="#DC143C"><strong>四、基于网格的方法</strong></font></h2><h3 id="4-1-STING（统计信息网格网格）"><a href="#4-1-STING（统计信息网格网格）" class="headerlink" title="4.1 STING（统计信息网格网格）"></a><font color="#2864FF"><strong>4.1 STING（统计信息网格网格）</strong></font></h3><blockquote>
+<ol>
+<li><strong>方法介绍：</strong><ul>
+<li>空间被划分为多个超立方体的小格子，小格子具有不同的层次/分辨率，高层小格子被划分为多个低层的小格子；</li>
+<li>每个小格子有统计信息（计数 / 最大值 / 最小值 / 均值 / 标准差 / 服从分布等）；</li>
+<li>高层格子的统计信息可由底层的来计算；</li>
+</ul>
+</li>
+<li><strong>方法评估：</strong><ul>
+<li>基于网格的计算独立于查询，不依赖于查询（因为存储在每个单元的统计信息提供了数据汇总信息）；</li>
+<li>网格结构利于并行处理与增量更新；</li>
+<li>主要优点：效率高（产生聚类的时间复杂度O(n)，n是对象数；层次结构建立后，查询时间为O(g)，g是最底层网格单元个数，通常远小于n）；</li>
+<li><code>主要缺点</code>：由于未考虑子女单元和其相邻单元之间的联系，分类边界都是水平或垂直的线，可能降低簇的质量和精确性。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h3 id="4-2-CLIQUE（类Apriori基于网格的聚类，发现子空间基于密度的簇）"><a href="#4-2-CLIQUE（类Apriori基于网格的聚类，发现子空间基于密度的簇）" class="headerlink" title="4.2 CLIQUE（类Apriori基于网格的聚类，发现子空间基于密度的簇）"></a><font color="#2864FF"><strong>4.2 CLIQUE（类Apriori基于网格的聚类，发现子空间基于密度的簇）</strong></font></h3><blockquote>
+<ol>
+<li><strong>核心思想：</strong><ul>
+<li>如果在3-D空间中是稠密的，那么在其任何投影空间中都应该是稠密的，类似Apriori思想，寻找高维空间的稠密单元。</li>
+</ul>
+</li>
+<li><strong>算法步骤：</strong><ul>
+<li><code>第一阶段</code>：把d-维数据空间划分若干互不重叠的矩形单元，并且从中<code>识别出稠密单元</code>，迭代连接子空间，并检查连接后的子空间中的点数是否满足<code>密度阈值</code>，直到都不稠密时终止。</li>
+<li><code>第二阶段</code>：使用每个子空间中的稠密单元来装配可能具有任意形状的簇（利用<code>最小描述长度</code>，使用最大区域来覆盖连接的稠密单元。原问题是 NP 难的，因此采用贪心策略）。</li>
+</ul>
+</li>
+<li><strong>方法评估：</strong><ul>
+<li>自动识别高维数据空间中数据稠密的子空间；</li>
+<li>不需要对数据分布做假设，数据输入次序无关/不敏感；</li>
+<li>输入数据的多少和维度，对算法的时间复杂度影响是线性的；</li>
+<li><code>缺点</code>：聚类精度可能会降低。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="五、聚类评估"><a href="#五、聚类评估" class="headerlink" title="五、聚类评估"></a><font color="#DC143C"><strong>五、聚类评估</strong></font></h2><h3 id="5-1-聚类评估主要步骤（三点）"><a href="#5-1-聚类评估主要步骤（三点）" class="headerlink" title="5.1 聚类评估主要步骤（三点）"></a><font color="#2864FF"><strong>5.1 聚类评估主要步骤（三点）</strong></font></h3><blockquote>
+<ul>
+<li><strong>聚类开始前：</strong><ul>
+<li>估计聚类趋势（Hopkins统计量），判断能否聚类[均匀数据集不可以聚类]。</li>
+</ul>
+</li>
+<li><strong>判断可以聚类之后：</strong><ul>
+<li>确定簇数（经验方法、肘方法、交叉验证法）；</li>
+</ul>
+</li>
+<li><strong>聚类完成后：</strong><ul>
+<li>度量聚类质量（给定标准→外在方法；没有标准→内在方法）；</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="5-2-估计聚类趋势（步骤一）"><a href="#5-2-估计聚类趋势（步骤一）" class="headerlink" title="5.2 估计聚类趋势（步骤一）"></a><font color="#2864FF"><strong>5.2 估计聚类趋势（步骤一）</strong></font></h3><blockquote>
+<ul>
+<li>每个均匀采样得到的样本都找一个离自己最近的数据集中的点，记为<code>xi</code>；</li>
+<li>均匀随机从数据集 D 中采样 n 个点 q1, q2, … , qn,并找出数据集 D 中离 qi 最近（除了 qi 本身以外 ）的点，记为<code>yi</code>；</li>
+<li><strong>Hopkins统计量：</strong><br><img src="http://p1.bpimg.com/567571/1ed7f5963f7a999f.png" alt=""> <ul>
+<li>包含簇（距离较近）时，<code>∑ yi</code> 会显著小于<code>∑ xi</code> ，H接近0；</li>
+<li>不包含明显的“自然簇”时（距离较远），H约为0.5。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="5-3-确定簇数（步骤二）"><a href="#5-3-确定簇数（步骤二）" class="headerlink" title="5.3 确定簇数（步骤二）"></a><font color="#2864FF"><strong>5.3 确定簇数（步骤二）</strong></font></h3><blockquote>
+<ul>
+<li><strong>1. 经验方法：</strong><br><code>√(n/2)</code>个簇，每个簇<code>√(2n)</code>个数据，总数据<code>n</code>个 </li>
+<li><strong>2. 肘方法</strong><ul>
+<li><strong>核心思想</strong>：增加簇数 k，检查簇内方差 S 随着 k 降低的速度，找拐点：</li>
+<li>给定 k，采用一种聚类方法对数据集聚类，计算每个簇的簇内方差之和 S；</li>
+<li>增加 k，S 会降低，因为簇多了，簇小了，簇内差异变小；</li>
+<li>检查 S 随 k 降低的速度，或者说找第一个“拐点”；</li>
+</ul>
+</li>
+<li><strong>3. 交叉验证法：</strong><ul>
+<li>将数据集划分为近似相等的 m 分；</li>
+<li>用其中 m-1 份构建聚类模型，剩下一份检验聚类质量（如：数据到最近“簇心”的距离平方和）；</li>
+<li>对给定的 k，重复上述过程 m 次；</li>
+<li>比较不同的 k；</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="5-4-度量聚类质量（步骤三）"><a href="#5-4-度量聚类质量（步骤三）" class="headerlink" title="5.4 度量聚类质量（步骤三）"></a><font color="#2864FF"><strong>5.4 度量聚类质量（步骤三）</strong></font></h3><blockquote>
+<ol>
+<li><strong>外在方法（参考混淆矩阵）：</strong></li>
+</ol>
+<ul>
+<li>给定一个标准，标准看成是“类标号”，故是有监督的（Bcubed精度和召回率）；</li>
+<li>准确率：<br><img src="http://p1.bpimg.com/567571/ee6d3de2685ac1e1.png" alt=""></li>
+<li>一个对象的精度指：C 给出的同一个簇中，多少个等于 L 给定的<br><img src="http://p1.bpimg.com/567571/1da9f05eff94a607.png" alt=""></li>
+<li>一个对象的召回率指：L 给出的同一个簇的对象多少被 C 正确给定<br><img src="http://p1.bpimg.com/567571/4aa9559866a617c4.png" alt=""></li>
+</ul>
+<ol>
+<li><strong>内在方法：</strong></li>
+</ol>
+<ul>
+<li><code>a(o)</code>是数据 o 到其<code>所属簇的其它数据</code>的距离均值，表示<code>簇内紧凑性</code>；</li>
+<li><code>b(o)</code>是数据 o 到<code>其它数据对象</code>的距离均值，表示 o 和其它簇的<code>簇间分离性</code>；</li>
+<li><strong>度量标准——轮廓系数：</strong><br><img src="http://p1.bqimg.com/567571/3226857e54228ccc.png" alt=""><ul>
+<li>s(o)取值在[-1, 1]，接近1时，o所在簇紧凑且远离其它簇；</li>
+<li>s(o)为负数时，表示o离其它簇对象的距离比自己所在簇的对象更近；</li>
+</ul>
+</li>
+<li>如何评估聚类方法获得的聚类质量?<ul>
+<li><strong> 所有对象的 <code>轮廓系数之和/均值</code> 。</strong></li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Data-Mining/" rel="tag"># Data Mining</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/17/Machine-Learning-Final-Exam/" rel="next" title="2016 Machine-Learning FINAL EXAM">
+                <i class="fa fa-chevron-left"></i> 2016 Machine-Learning FINAL EXAM
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/17/Data-Mining-Clustering/"
+           data-title="聚类算法总结" data-url="http://water160.github.io/2017/01/17/Data-Mining-Clustering/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Water160" />
+          <p class="site-author-name" itemprop="name">Water160</p>
+          <p class="site-description motion-element" itemprop="description">Moving Bricks...</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/water160" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/water160" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、划分方法"><span class="nav-number">1.</span> <span class="nav-text">一、划分方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-K-Means算法"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 K-Means算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-PAM算法"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 PAM算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-针对大规模数据集改进算法"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 针对大规模数据集改进算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、层次方法"><span class="nav-number">2.</span> <span class="nav-text">二、层次方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-主要层次算法："><span class="nav-number">2.1.</span> <span class="nav-text">2.1 主要层次算法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-针对大规模数据集改进算法："><span class="nav-number">2.2.</span> <span class="nav-text">2.2 针对大规模数据集改进算法：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-BIRCH算法（利用层次结构的平衡迭代规约和聚类）"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 BIRCH算法（利用层次结构的平衡迭代规约和聚类）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-Chameleon算法（使用动态建模的多阶段层次聚类）"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 Chameleon算法（使用动态建模的多阶段层次聚类）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-概率层次聚类算法："><span class="nav-number">2.3.</span> <span class="nav-text">2.3 概率层次聚类算法：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、基于密度的方法"><span class="nav-number">3.</span> <span class="nav-text">三、基于密度的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-DBSCAN算法（一个cluster就是密度连通的最大点集）"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 DBSCAN算法（一个cluster就是密度连通的最大点集）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-OPTICS算法（使用簇排序，不显式产生数据集聚类）"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 OPTICS算法（使用簇排序，不显式产生数据集聚类）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-DENCLUE算法（基于密度分布函数的聚类）"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 DENCLUE算法（基于密度分布函数的聚类）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、基于网格的方法"><span class="nav-number">4.</span> <span class="nav-text">四、基于网格的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-STING（统计信息网格网格）"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 STING（统计信息网格网格）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-CLIQUE（类Apriori基于网格的聚类，发现子空间基于密度的簇）"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 CLIQUE（类Apriori基于网格的聚类，发现子空间基于密度的簇）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、聚类评估"><span class="nav-number">5.</span> <span class="nav-text">五、聚类评估</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-聚类评估主要步骤（三点）"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 聚类评估主要步骤（三点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-估计聚类趋势（步骤一）"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 估计聚类趋势（步骤一）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-确定簇数（步骤二）"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 确定簇数（步骤二）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-度量聚类质量（步骤三）"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 度量聚类质量（步骤三）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Water160</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"water160"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
